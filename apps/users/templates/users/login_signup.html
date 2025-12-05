@@ -1,0 +1,229 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nature Cart - Login/Signup</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* --- NATURE CART COLORS --- */
+        :root {
+            --nature-green: #228B22;
+            --sage-green: #8FBC8F;
+            --off-white: #F5F5DC;
+            --earth-brown: #A0522D;
+        }
+        *{box-sizing:border-box;}
+        body{
+            background: var(--off-white);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            flex-direction:column;
+            font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+            height:100vh;
+            margin:0;
+            transition:background 0.6s ease;
+        }
+        h1{font-weight:bold;margin:0;color:var(--nature-green);}
+        p{font-size:14px;font-weight:400;line-height:20px;letter-spacing:0.5px;margin:20px 0 30px;}
+        span{font-size:12px;color:#777;}
+        a{text-decoration:none;margin:15px 0;color:#333;transition:color 0.3s;}
+        a:hover{color:var(--earth-brown);}
+        button{
+            border-radius:20px;
+            border:1px solid var(--nature-green);
+            background-color:var(--nature-green);
+            color:#fff;font-size:12px;font-weight:bold;
+            padding:12px 45px;
+            letter-spacing:1px;
+            text-transform:uppercase;
+            transition: transform 80ms ease-in, background-color 0.3s;
+            cursor:pointer;
+        }
+        button:active{transform: scale(0.95);}
+        button:hover:not(.ghost){background-color:var(--sage-green);border-color:var(--sage-green);}
+        button.ghost{background-color:transparent;border-color:#fff;color:#fff;transition:all 0.3s ease;}
+        button.ghost:hover{background-color:rgba(255,255,255,0.2);color:#fff;border-color:#fff;}
+        form{
+            background-color:#fff;
+            display:flex;
+            flex-direction:column;
+            align-items:center;
+            justify-content:center;
+            padding:0 50px;
+            height:100%;
+            text-align:center;
+        }
+        input{
+            background-color:#eee;
+            border:1px solid #ddd;
+            padding:12px 15px;
+            margin:8px 0;
+            width:100%;
+            border-radius:5px;
+            transition:border-color 0.3s;
+        }
+        input:focus{outline:none;border-color:var(--nature-green);}
+        .container{
+            background-color:#fff;
+            border-radius:10px;
+            box-shadow:0 14px 28px rgba(0,0,0,0.15),0 10px 10px rgba(0,0,0,0.12);
+            position:relative;
+            overflow:hidden;
+            width:768px;
+            max-width:90%;
+            min-height:550px;
+        }
+        .signup-fields{display:flex;flex-wrap:wrap;justify-content:space-between;width:100%;}
+        .signup-fields input{width:48%;margin:4px 0;}
+        .form-container{position:absolute;top:0;height:100%;transition:all 0.6s ease-in-out;}
+        .sign-in-container{left:0;width:50%;z-index:2;}
+        .sign-up-container{left:0;width:50%;opacity:0;z-index:1;}
+        .social-container{margin:20px 0;}
+        .social-container a{
+            border:1px solid #ddd;border-radius:50%;display:inline-flex;
+            justify-content:center;align-items:center;margin:0 5px;
+            height:40px;width:40px;color:var(--sage-green);transition:all 0.2s ease;
+        }
+        .social-container a:hover{border-color:var(--nature-green);color:var(--nature-green);}
+        .overlay-container{position:absolute;top:0;left:50%;width:50%;height:100%;overflow:hidden;transition:transform 0.6s ease-in-out;z-index:100;}
+        .overlay{
+            background-image:linear-gradient(to right, rgba(34,139,34,0.7), rgba(160,82,45,0.7)), url("{% static 'authentication/images/nature_cart_bg.jpg' %}");
+            background-repeat:no-repeat;
+            background-size:cover;
+            background-position:center;
+            color:#fff;
+            position:relative;
+            left:-100%;
+            height:100%;
+            width:200%;
+            transform:translateX(0);
+            transition:transform 0.6s ease-in-out;
+        }
+        .overlay-panel{position:absolute;display:flex;align-items:center;justify-content:center;flex-direction:column;padding:0 40px;text-align:center;top:0;height:100%;width:50%;transform:translateX(0);transition:transform 0.6s ease-in-out;}
+        .overlay-left{transform:translateX(-20%);}
+        .overlay-right{right:0;transform:translateX(0);}
+        .container.right-panel-active .overlay-container{transform:translateX(-100%);}
+        .container.right-panel-active .sign-in-container{transform:translateX(100%);}
+        .container.right-panel-active .sign-up-container{transform:translateX(100%);opacity:1;z-index:5;}
+        .container.right-panel-active .overlay{transform:translateX(50%);}
+        .container.right-panel-active .overlay-left{transform:translateX(0);}
+        .container.right-panel-active .overlay-right{transform:translateX(20%);}
+        .overlay h1{color:#fff;font-size:28px;}
+        .overlay p{color:#fff;}
+        .form-container a{color:var(--earth-brown);font-weight:600;}
+        ul.mb-4{list-style:none;padding:0;margin:10px 0;width:100%;text-align:left;}
+        ul.mb-4 li{color:#D9534F;font-size:13px;margin-bottom:5px;font-weight:500;}
+    </style>
+</head>
+<body>
+    <div class="container {% if request.GET.show == 'signup' %}right-panel-active{% endif %}" id="container">
+        
+        <!-- SIGNUP FORM -->
+        <div class="form-container sign-up-container">
+            {% if not user.is_authenticated %}
+            <form method="POST" action="{% url 'users:login_signup' %}">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="signup"/>
+                <h1>Create Nature Cart Account</h1>
+                <div class="social-container">
+                    <a href="#" class="social facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social google"><i class="fab fa-google"></i></a>
+                    <a href="#" class="social linkedin"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>Or register with your details</span>
+                <input type="text" name="full_name" placeholder="Full Name" required/>
+                <input type="email" name="email" placeholder="Email" required/>
+                <div class="signup-fields">
+                    <input type="text" name="phone_number" placeholder="Phone Number" required/>
+                    <input type="text" name="location_city" placeholder="Location/City" required/>
+                </div>
+                <input type="password" name="password" placeholder="Password" required/>
+                <input type="password" name="confirm_password" placeholder="Confirm Password" required/>
+
+                {% if messages %}
+                <ul class="mb-4">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+
+                <button type="submit">Sign Up Now</button>
+            </form>
+            {% endif %}
+        </div>
+
+        <!-- LOGIN FORM -->
+        <div class="form-container sign-in-container">
+            {% if not user.is_authenticated %}
+            <form method="POST" action="{% url 'users:login_signup' %}">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="login"/>
+                <h1>Sign in to Nature Cart</h1>
+                <div class="social-container">
+                    <a href="#" class="social facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social google"><i class="fab fa-google"></i></a>
+                    <a href="#" class="social linkedin"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+                <span>or use your registered email</span>
+                <input type="email" name="email" placeholder="Email" required/>
+                <input type="password" name="password" placeholder="Password" required/>
+
+                {% if messages %}
+                <ul class="mb-4">
+                    {% for message in messages %}
+                        <li>{{ message }}</li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                <a href="#">Forgot your password?</a>
+                <button type="submit">Sign In</button>
+            </form>
+            {% else %}
+            <!-- LOGGED IN BUTTON -->
+            <div style="margin-top:100px;">
+                <a href="{% url 'users:logout' %}">
+                    <button class="ghost">Logout / Switch User</button>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>Welcome Back to Nature's Best!</h1>
+                    <p>Log in and continue exploring pure, organic products.</p>
+                    {% if not user.is_authenticated %}
+                    <button class="ghost" id="signIn">Sign In</button>
+                    {% endif %}
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Pure. Natural. Organic.</h1>
+                    <p>Register now to discover eco-friendly products.</p>
+                    {% if not user.is_authenticated %}
+                    <button class="ghost" id="signUp">Sign Up</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+const signUpButton = document.getElementById('signUp');
+const signInButton = document.getElementById('signIn');
+const container = document.getElementById('container');
+
+function updatePanelState(isActive){
+    if(isActive){container.classList.add("right-panel-active");}
+    else{container.classList.remove("right-panel-active");}
+}
+if(signUpButton){signUpButton.addEventListener('click',()=>updatePanelState(true));}
+if(signInButton){signInButton.addEventListener('click',()=>updatePanelState(false));}
+</script>
+</body>
+</html>

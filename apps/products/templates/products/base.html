@@ -1,0 +1,191 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NatureCart - Organic Products{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="font-sans antialiased bg-white">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+                <span class="text-green-600 text-2xl">🌱</span>
+                <span class="text-xl font-bold text-gray-800">NatureCart</span>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="flex items-center space-x-6 text-gray-700">
+                <a href="{% url 'products:index' %}" class="hover:text-green-600 font-medium hidden sm:block">Home</a>
+                <a href="{% url 'products:products1' %}" class="hover:text-green-600 font-medium hidden sm:block">Products</a>
+
+                <!-- Cart Icon with Count -->
+                <a href="{% url 'orders:cart' %}" class="relative hover:text-green-600 text-xl">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0
+                              a2 2 0 100 4 2 2 0 000-4zm-8 4a2 2 0 11-4 0 2 2 0 014 0z">
+                        </path>
+                    </svg>
+
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-green-600 text-white text-xs rounded-full px-1.5">
+                        {{ cart_item_count|default:0 }}
+                    </span>
+                </a>
+                 {% if user.is_authenticated %}
+        <!-- Logged-in user: show Logout -->
+        <a href="{% url 'users:logout' %}" class="hover:text-red-600 font-medium">
+            Logout
+        </a>
+    {% else %}
+        <!-- Visitor: show combined Login/Signup -->
+        <a href="{% url 'users:login_signup' %}?show=login" class="hover:text-green-600 font-medium">
+            Login
+        </a>
+        <a href="{% url 'users:login_signup' %}?show=signup" class="hover:text-green-600 font-medium">
+            Signup
+        </a>
+    {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+
+    <!-- ============================
+         FOOTER (MATCHING YOUR SCREENSHOT)
+    ============================= -->
+    <footer class="bg-gray-50 py-12 mt-16 border-t border-gray-200">
+        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-10 text-gray-700">
+
+            <!-- Logo + Description -->
+            <div>
+                <div class="flex items-center space-x-2 mb-3">
+                    <span class="text-green-600 text-2xl">🌱</span>
+                    <span class="text-xl font-bold text-gray-800">NatureCart</span>
+                </div>
+                <p class="text-sm leading-6">
+                    Your trusted source for organic, eco-friendly, and natural products.
+                    Committed to sustainable living and healthy choices.
+                </p>
+
+                <div class="flex space-x-4 mt-4 text-xl text-gray-500">
+                    <a href="#" class="hover:text-green-600">📘</a>
+                    <a href="#" class="hover:text-green-600">📷</a>
+                    <a href="#" class="hover:text-green-600">🐦</a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 text-gray-800">Quick Links</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="/" class="hover:text-green-600">Home</a></li>
+                    <li><a href="/products/" class="hover:text-green-600">Products</a></li>
+                    <li><a href="/orders/cart/" class="hover:text-green-600">Cart</a></li>
+                    <li><a href="/account/" class="hover:text-green-600">Account</a></li>
+                </ul>
+            </div>
+
+            <!-- Categories -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 text-gray-800">Categories</h3>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="hover:text-green-600">Organic Fruits</a></li>
+                    <li><a href="#" class="hover:text-green-600">Fresh Vegetables</a></li>
+                    <li><a href="#" class="hover:text-green-600">Herbal Products</a></li>
+                    <li><a href="#" class="hover:text-green-600">Eco-Friendly Items</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact -->
+            <div>
+                <h3 class="text-lg font-semibold mb-3 text-gray-800">Contact Us</h3>
+                <ul class="space-y-2 text-sm">
+                    <li>📍 123 Organic Street<br>Green Valley, CA 90210</li>
+                    <li>📞 (555) 123-4567</li>
+                    <li>✉️ hello@naturecart.com</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="border-t border-gray-200 mt-10 pt-4 text-center text-sm text-gray-500">
+            <div class="flex flex-col md:flex-row items-center justify-between container mx-auto px-6">
+
+                <p>© 2024 NatureCart. All rights reserved.</p>
+
+                <div class="flex space-x-6 mt-3 md:mt-0">
+                    <a href="#" class="hover:text-green-600">Privacy Policy</a>
+                    <a href="#" class="hover:text-green-600">Terms of Service</a>
+                    <a href="#" class="hover:text-green-600">Powered by Readify</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- JS: Add to Cart / Clear Cart AJAX -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Add to Cart AJAX
+            document.querySelectorAll('.add-to-cart-form').forEach(form => {
+                form.addEventListener('submit', function(e){
+                    e.preventDefault();
+                    const productId = this.dataset.productId;
+                    const csrfToken = this.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                    fetch("{% url 'orders:add_to_cart' 0 %}".replace('0', productId), {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.success){
+                            document.getElementById('cart-count').textContent = data.cartItemCount;
+                        }
+                    });
+                });
+            });
+
+            // Clear Cart AJAX
+            const clearCartForm = document.getElementById('clear-cart-form');
+            if(clearCartForm){
+                clearCartForm.addEventListener('submit', function(e){
+                    e.preventDefault();
+                    const csrfToken = this.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                    fetch("{% url 'orders:clear_cart' %}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.success){
+                            document.getElementById('cart-count').textContent = 0;
+                            alert('Cart cleared successfully!');
+                            window.location.href = "{% url 'products:products1' %}";
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+
+</body>
+</html>

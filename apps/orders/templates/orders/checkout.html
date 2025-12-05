@@ -1,0 +1,112 @@
+{% extends 'products/base.html' %}
+{% load static %}
+{% block title %}Checkout | NatureCart{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-6 py-10">
+
+    <h1 class="text-3xl font-bold text-green-700 mb-6">Checkout</h1>
+    <p class="text-gray-600 mb-8">Complete your order for fresh organic products</p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+
+        <!-- LEFT SIDE -->
+        <div class="lg:col-span-2 space-y-8">
+
+            <!-- Contact Info -->
+            <div class="border p-6 rounded-lg shadow-sm bg-white">
+                <h2 class="font-semibold text-lg mb-4">Contact Information</h2>
+                <input type="email" placeholder="you@email.com"
+                    class="w-full border p-3 rounded mb-3">
+                <input type="text" placeholder="(305) 123-4567"
+                    class="w-full border p-3 rounded">
+            </div>
+
+            <!-- Shipping Address -->
+            <div class="border p-6 rounded-lg shadow-sm bg-white">
+                <h2 class="font-semibold text-lg mb-4">Shipping Address</h2>
+
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <input type="text" placeholder="First Name" class="border p-3 rounded">
+                    <input type="text" placeholder="Last Name" class="border p-3 rounded">
+                </div>
+
+                <input type="text" placeholder="Street Address"
+                    class="w-full border p-3 rounded mb-4">
+
+                <div class="grid grid-cols-3 gap-4">
+                    <input type="text" placeholder="City" class="border p-3 rounded">
+                    <input type="text" placeholder="State" class="border p-3 rounded">
+                    <input type="text" placeholder="Zip Code" class="border p-3 rounded">
+                </div>
+            </div>
+
+            <!-- Payment -->
+            <div class="border p-6 rounded-lg shadow-sm bg-white">
+                <h2 class="font-semibold text-lg mb-4">Payment Method</h2>
+
+                <!-- Only Cash on Delivery -->
+                <label class="flex gap-3 mb-3 font-semibold text-green-700">
+                    <input type="radio" name="payment" checked>
+                    Cash on Delivery
+                </label>
+
+                <p class="text-sm text-gray-600 mt-2">
+                    Pay with cash when your order arrives at your doorstep.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- RIGHT SIDE: ORDER SUMMARY -->
+        <div class="border p-6 rounded-lg shadow bg-white h-fit">
+            <h2 class="font-semibold text-lg mb-4">Order Summary</h2>
+
+            {% for item in cart_items %}
+            <div class="flex justify-between mb-4">
+                <div>
+                    <p class="font-semibold">{{ item.product.name }}</p>
+                    <p class="text-sm text-gray-600">Qty: {{ item.quantity }}</p>
+                </div>
+                <p class="font-semibold">${{ item.product.price }}</p>
+            </div>
+            {% endfor %}
+
+            <hr class="my-4">
+
+            <div class="flex justify-between text-sm mb-2">
+                <p>Subtotal</p>
+                <p>${{ subtotal }}</p>
+            </div>
+
+            <div class="flex justify-between text-sm mb-2">
+                <p>Shipping</p>
+                <p>Free</p>
+            </div>
+
+            <div class="flex justify-between text-sm mb-4">
+                <p>Tax</p>
+                <p>${{ tax }}</p>
+            </div>
+
+            <div class="flex justify-between font-bold text-lg mb-6">
+                <p>Total</p>
+                <p>${{ total }}</p>
+            </div>
+
+            <form action="{% url 'orders:place_order' %}" method="POST">
+    {% csrf_token %}
+    <button class="bg-green-600 hover:bg-green-700 text-white py-3 px-4 w-full rounded">
+        Place Order
+    </button>
+</form>
+
+
+            <p class="text-xs text-gray-500 text-center mt-4">
+                Your payment will be collected upon delivery.
+            </p>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
